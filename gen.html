@@ -8,8 +8,8 @@
     <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css" />
     <script src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"
-        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-        crossorigin="anonymous"></script>
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+    </script>
     <script type="text/javascript">
     </script>
 </head>
@@ -20,13 +20,11 @@
             <div class="row">
                 <div class="col-sm-8 offset-sm-2 col-md-6 offset-md-3 text-center">
                     <h1>百度网盘秒传链接生成</h1>
-                    <p>v0.1</p>
-                    <p>
-                        <a href='./index.html'>秒传链接在线转存</a></br>
-                        <a href='./multisave.html'>秒传链接批量转存</a></br>
-                        <a href='./convert.html'>秒传链接在线转换</a>
-                    </p>
-                    <p><b>支持批量生成</b></p>
+                    <p id="version">v0.3 mengzonefire version</p>
+                    <p><b>请先阅读 <a href='./manual.html' target=_blank>使用教程</b></a></br></p>
+                    <p><a href='./index.html'>在线转存</a> <a href='./multisave.html'>批量转存</a> <a
+                            href='./convert.html'>秒传转换</a></p>
+                    <p><b>支持批量生成, 需要在度盘中存在相同文件才能使秒传生效!</b></p>
                 </div>
                 <div class="col-sm-8 offset-sm-2 col-md-6 offset-md-3 text-center">
                     <input id=file type=file placeholder="select a file" multiple>
@@ -46,17 +44,22 @@
                                 calculate(file.files[i], file_amount, i, callBack = function (md5, file) {
 
                                     slicemd5(file, callBack = function (slicemd5) {
-                                        document.body.appendChild(document.createElement('input')).id = 'link' + i;
+                                        document.body.appendChild(document.createElement(
+                                            'input')).id = 'link' + i;
                                         document.getElementById('link' + i).type = 'hidden';
-                                        document.getElementById('link' + i).setAttribute('value', slicemd5);
+                                        document.getElementById('link' + i).setAttribute(
+                                            'value', slicemd5);
                                         var file_count = 1;
                                         file_md5 = md5;
                                         file_length = file.size;
                                         file_name = file.name;
                                         slice_md5 = document.getElementById('link' + i).value;
-                                        link = file_md5 + '#' + slice_md5 + '#' + file_length + '#' + file_name
-                                        document.getElementById('link').innerHTML += link + '\n';
-                                        document.body.removeChild(document.getElementById('link' + i));
+                                        link = file_md5 + '#' + slice_md5 + '#' + file_length +
+                                            '#' + file_name
+                                        document.getElementById('link').innerHTML += link +
+                                        '\n';
+                                        document.body.removeChild(document.getElementById(
+                                            'link' + i));
 
                                     })
 
@@ -65,9 +68,11 @@
 
                             }
                         })
+
                         function slicemd5(file, callBack) {
                             var fileReader = new FileReader(),
-                                blobSlice = File.prototype.mozSlice || File.prototype.webkitSlice || File.prototype.slice,
+                                blobSlice = File.prototype.mozSlice || File.prototype.webkitSlice || File.prototype
+                                .slice,
                                 chunkSize = 262144,
                                 // read in chunks of 256KB  
                                 chunks = Math.ceil(1),
@@ -80,8 +85,7 @@
 
                                 if (currentChunk < chunks) {
                                     loadNext();
-                                }
-                                else {
+                                } else {
                                     callBack(spark.end());
                                 }
                             };
@@ -95,9 +99,11 @@
 
                             loadNext();
                         }
+
                         function calculate(file, file_amount, i, callBack) {
                             var fileReader = new FileReader(),
-                                blobSlice = File.prototype.mozSlice || File.prototype.webkitSlice || File.prototype.slice,
+                                blobSlice = File.prototype.mozSlice || File.prototype.webkitSlice || File.prototype
+                                .slice,
                                 chunkSize = 2097152,
                                 // read in chunks of 2MB  
                                 chunks = Math.ceil(file.size / chunkSize),
@@ -110,12 +116,11 @@
 
                                 if (currentChunk < chunks) {
                                     loadNext();
-                                }
-                                else {
+                                } else {
                                     if (i > 0) {
-                                        document.getElementById('log').innerHTML = 'calculating ' + i + ' of ' + file_amount + ' files';
-                                    }
-                                    else {
+                                        document.getElementById('log').innerHTML = 'calculating ' + i + ' of ' +
+                                            file_amount + ' files';
+                                    } else {
                                         document.getElementById('log').innerHTML = 'done'
                                     }
                                     callBack(spark.end(), file);
