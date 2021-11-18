@@ -1,11 +1,11 @@
 /*
  * @Author: mengzonefire
  * @Date: 2021-10-14 16:36:56
- * @LastEditTime: 2021-10-16 12:42:50
+ * @LastEditTime: 2021-11-18 19:35:26
  * @LastEditors: mengzonefire
  * @Description:
  */
-var version = "0.3";
+var version = "0.4";
 var updateUrl =
   "https://api.github.com/repos/mengzonefire/baidupan-rapidupload/releases/latest";
 var releasePage =
