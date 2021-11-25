@@ -1,7 +1,7 @@
 /*
  * @Author: mengzonefire
  * @Date: 2021-10-14 16:36:56
- * @LastEditTime: 2021-11-25 20:21:00
+ * @LastEditTime: 2021-11-25 20:26:26
  * @LastEditors: mengzonefire
  * @Description:
  */
@@ -10,15 +10,6 @@ var updateUrl =
   "https://api.github.com/repos/mengzonefire/baidupan-rapidupload/releases/latest";
 var releasePage =
   "https://github.com/mengzonefire/baidupan-rapidupload/releases/tag/";
-
-function checkBdstoken(bdstoken) {
-  if (/^[\da-z]{32}$/.test(bdstoken)) {
-    localStorage.setItem("Blink_bdstoken", bdstoken);
-    return true;
-  }
-  alert("bdstoken错误, 正确格式为32位字母数字组合");
-  return false;
-}
 
 function checkPath(path) {
   if (!path.match(/["\\\:*?<>|]/)) {
@@ -88,8 +79,8 @@ function openPostWindow(url, data) {
   document.body.removeChild(tempForm);
 }
 
-function saveFile(md5, md5s, size, path, bdstoken) {
-  openPostWindow("https://pan.baidu.com/api/rapidupload?bdstoken=" + bdstoken, {
+function saveFile(md5, md5s, size, path) {
+  openPostWindow("https://pan.baidu.com/api/rapidupload", {
     "content-length": size,
     "content-md5": md5.toLowerCase(),
     "slice-md5": md5s.toLowerCase(),
@@ -97,17 +88,13 @@ function saveFile(md5, md5s, size, path, bdstoken) {
   });
 }
 
-function saveFile2(md5, size, path, bdstoken) {
-  openPostWindow(
-    "https://pan.baidu.com/rest/2.0/xpan/file?method=create&bdstoken=" +
-      bdstoken,
-    {
-      size: size,
-      block_list: JSON.stringify([md5.toLowerCase()]),
-      path: path,
-      rtype: 0,
-    }
-  );
+function saveFile2(md5, size, path) {
+  openPostWindow("https://pan.baidu.com/rest/2.0/xpan/file?method=create", {
+    size: size,
+    block_list: JSON.stringify([md5.toLowerCase()]),
+    path: path,
+    rtype: 0,
+  });
 }
 
 function DuParser() {}

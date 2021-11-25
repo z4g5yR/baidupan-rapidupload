@@ -5,9 +5,11 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=no" />
   <title>使用教程</title>
-  <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/5.0.2/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css" />
   <script src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js"></script>
-  <script src="https://cdn.staticfile.org/twitter-bootstrap/5.0.2/js/bootstrap.min.js"></script>
+  <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+  </script>
   <style>
   </style>
 </head>
@@ -18,19 +20,18 @@
       <div class="row">
         <div class="col-sm-8 offset-sm-2 col-md-6 offset-md-3 text-center">
           <h1>本站使用教程</h1>
-          <p>v0.4 mengzonefire version</p>
+          <p>v0.5 mengzonefire version</p>
           <p><a href='./'>返回首页</a></br>
         </div>
         <div class="col-sm-8 offset-sm-2 col-md-6 offset-md-3 text-center">
         </div>
         <div id="body" class="col-sm-8 offset-sm-2 col-md-6 offset-md-3 text-center">
-
           <h4>常见问题</h4>
           <p><a data-toggle="collapse" data-parent="#body" href="#collapseOne">
               <b>1. 如何转存秒传链接？</b>
             </a></p>
           <div id="collapseOne" class="panel-collapse collapse in">
-            填入 bdstoken、秒传链接，点击'解析链接并转存'。</br>
+            填入 秒传链接、转存路径，点击'解析链接并转存'。</br>
             显示 "errno":0 即为转存成功。
           </div>
           <p><a data-toggle="collapse" data-parent="#body" href="#collapseTwo">
@@ -41,7 +42,8 @@
             大文件计算速度较慢，请耐心等待。</br>
             <b>需要在度盘中存在相同文件才能使秒传生效!</b>
           </div>
-          <p><a href="https://shimowendang.com/docs/hTCKJHPJRkp8PDR8" target=_blank><b>3. 支持哪些秒传链接格式?</b></a></p>
+          <p><a href="https://mengzonefire.code.misakanet.cn/rapid-upload-userscript-doc/format-support/"
+              target=_blank><b>3. 支持哪些秒传链接格式?</b></a></p>
           </br>
           <h4>工具说明</h4>
           <p>原作者: <a href='https://t.me/TkzcM/' target=_blank>TkzcM</a>, 当前版本作者: <a
@@ -52,6 +54,10 @@
           </br>
           <h4>更新历史</h4>
           <dl>
+            <dt>v0.5 (21.11.25):</dt>
+            <dd>移除无用的bdstoken输入框(只需要浏览器登陆度盘即可转存)</dd>
+            <dd>修正版本检测逻辑, 引用js文件添加缓存刷新</dd>
+
             <dt>v0.4 (21.11.19):</dt>
             <dd>修正&补充部分提示文本</dd>
             <dd>优化页面样式, 秒传生成工具添加了进度显示</dd>
