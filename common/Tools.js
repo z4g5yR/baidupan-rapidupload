@@ -1,11 +1,11 @@
 /*
  * @Author: mengzonefire
  * @Date: 2021-10-14 16:36:56
- * @LastEditTime: 2021-11-18 19:35:26
+ * @LastEditTime: 2021-11-25 20:21:00
  * @LastEditors: mengzonefire
  * @Description:
  */
-var version = "0.4";
+var version = "0.5";
 var updateUrl =
   "https://api.github.com/repos/mengzonefire/baidupan-rapidupload/releases/latest";
 var releasePage =
@@ -50,8 +50,8 @@ function checkUpdate() {
     type: "GET",
     dataType: "json",
     success: function (data, statusTxt) {
+      localStorage.setItem("Last_version", data.tag_name.toString());
       if (statusTxt === "success" && data.tag_name !== version) {
-        localStorage.setItem("Last_version", data.tag_name.toString());
         $("#version").after(
           '<p>发现新版本 <a href="' +
             releasePage +
