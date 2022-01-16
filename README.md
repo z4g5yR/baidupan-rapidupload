@@ -1,12 +1,15 @@
 # baidupan-rapidupload
-百度网盘秒传链接在线转存/生成/转换（全平台）
 
-https://rapid.acg.uy
+百度网盘秒传链接 转存/生成/转换 网页版工具 (全平台)
 
-支持 iOS/Android/PC and more
+[示例站点(可能不是最新版本)](http://rapidacg.gmgard.moe/)
+
+# 说明
+
+基于原作者 [TkzcM](https://t.me/TkzcM/) 的版本做了进一步完善
 
 # 预览
 
-![支持转存](https://i.yusa.me/BqI9b1mQlQrL.png)
+![支持转存](https://pic.rmb.bdstatic.com/bjh/3f5502b43328f59a8776ded1a81b8114.png)
 ![支持生成](https://i.yusa.me/46Tnl9a4xw2w.png)
 ![支持转换](https://i.yusa.me/YXH7WwRvgW1z.png)
