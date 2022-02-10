@@ -8,6 +8,10 @@
 
 基于原作者 [TkzcM](https://t.me/TkzcM/) 的版本做了进一步完善
 
+# TODO
+
+1. 已知一部分PC浏览器以及大部分手机浏览器转存时会显示{"errno":2}(常规接口), {"errno":-6}(备用接口), 为兼容性问题, 尝试修复</dt>
+
 # 预览
 
 ![支持转存](https://pic.rmb.bdstatic.com/bjh/3f5502b43328f59a8776ded1a81b8114.png)
