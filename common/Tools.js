@@ -5,7 +5,7 @@
  * @LastEditors: mengzonefire
  * @Description:
  */
-var version = "0.7-dev";
+var version = "0.8-dev";
 var updateUrl =
   "https://api.github.com/repos/mengzonefire/baidupan-rapidupload/releases/latest";
 var releasePage =
