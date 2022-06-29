@@ -3,13 +3,15 @@
  * @Date: 2021-10-14 16:36:56
  * @LastEditTime: 2022-02-10 10:54:09
  * @LastEditors: mengzonefire
- * @Description:
+ * @Description: 共用JS工具库
  */
-var version = "0.8";
-var updateUrl =
+
+const version = "0.8";
+const updateUrl =
   "https://api.github.com/repos/mengzonefire/baidupan-rapidupload/releases/latest";
-var releasePage =
+const releasePage =
   "https://github.com/mengzonefire/baidupan-rapidupload/releases/tag/";
+const bdlinkPattern = /#bdlink=([\da-zA-Z+/=]+)/; // b64可能出现的字符: 大小写字母a-zA-Z, 数字0-9, +, /, = (=用于末尾补位)
 
 function checkPath(path) {
   if (!path.match(/["\\\:*?<>|]/)) {
@@ -97,8 +99,17 @@ function saveFile2(md5, size, path) {
   });
 }
 
+/**
+ * @description: 从url中解析秒传链接
+ */
+function parseQueryLink(url) {
+  var bdlinkB64 = url.match(bdlinkPattern);
+  return bdlinkB64 ? bdlinkB64[1].fromBase64() : "";
+}
+/**
+ * @description: 秒传链接解析器
+ */
 function DuParser() {}
-
 DuParser.parse = function generalDuCodeParse(szUrl) {
   var r;
   if (szUrl.indexOf("bdpan") === 0) {
@@ -107,13 +118,15 @@ DuParser.parse = function generalDuCodeParse(szUrl) {
   } else if (szUrl.indexOf("BaiduPCS-Go") === 0) {
     r = DuParser.parseDu_v2(szUrl);
     r.ver = "PCS-Go";
-  } else {
+  } else if (szUrl.indexOf("BDLINK") === 0) {
     r = DuParser.parseDu_v3(szUrl);
+    r.ver = "游侠 v1";
+  } else {
+    r = DuParser.parseDu_v4(szUrl);
     r.ver = "梦姬标准";
   }
   return r;
 };
-
 DuParser.parseDu_v1 = function parseDu_v1(szUrl) {
   return szUrl
     .replace(/\s*bdpan:\/\//g, " ")
@@ -137,7 +150,6 @@ DuParser.parseDu_v1 = function parseDu_v1(szUrl) {
       };
     });
 };
-
 DuParser.parseDu_v2 = function parseDu_v2(szUrl) {
   return szUrl
     .split("\n")
@@ -161,8 +173,36 @@ DuParser.parseDu_v2 = function parseDu_v2(szUrl) {
       };
     });
 };
-
 DuParser.parseDu_v3 = function parseDu_v3(szUrl) {
+  var raw = atob(szUrl.slice(6).replace(/\s/g, ""));
+  if (raw.slice(0, 5) !== "BDFS\x00") {
+    return null;
+  }
+  var buf = new SimpleBuffer(raw);
+  var ptr = 9;
+  var arrFiles = [];
+  var fileInfo, nameSize;
+  var total = buf.readUInt(5);
+  var i;
+  for (i = 0; i < total; i++) {
+    // 大小 (8 bytes)
+    // MD5 + MD5S (0x20)
+    // nameSize (4 bytes)
+    // Name (unicode)
+    fileInfo = {};
+    fileInfo.size = buf.readULong(ptr + 0);
+    fileInfo.md5 = buf.readHex(ptr + 8, 0x10);
+    fileInfo.md5s = buf.readHex(ptr + 0x18, 0x10);
+    nameSize = buf.readUInt(ptr + 0x28) << 1;
+    fileInfo.nameSize = nameSize;
+    ptr += 0x2c;
+    fileInfo.path = buf.readUnicode(ptr, nameSize);
+    arrFiles.push(fileInfo);
+    ptr += nameSize;
+  }
+  return arrFiles;
+};
+DuParser.parseDu_v4 = function parseDu_v3(szUrl) {
   return szUrl
     .split("\n")
     .map(function (z) {
@@ -184,4 +224,55 @@ DuParser.parseDu_v3 = function parseDu_v3(szUrl) {
         path: info[4],
       };
     });
+};
+
+/**
+ * 一个简单的类似于 NodeJS Buffer 的实现.
+ * 用于解析游侠度娘提取码。
+ * @param {SimpleBuffer}
+ */
+function SimpleBuffer(str) {
+  this.fromString(str);
+}
+SimpleBuffer.toStdHex = function toStdHex(n) {
+  return ("0" + n.toString(16)).slice(-2);
+};
+SimpleBuffer.prototype.fromString = function fromString(str) {
+  var len = str.length;
+  this.buf = new Uint8Array(len);
+  for (var i = 0; i < len; i++) {
+    this.buf[i] = str.charCodeAt(i);
+  }
+};
+SimpleBuffer.prototype.readUnicode = function readUnicode(index, size) {
+  if (size & 1) {
+    size++;
+  }
+  var bufText = Array.prototype.slice
+    .call(this.buf, index, index + size)
+    .map(SimpleBuffer.toStdHex);
+  var buf = [""];
+  for (var i = 0; i < size; i += 2) {
+    buf.push(bufText[i + 1] + bufText[i]);
+  }
+  return JSON.parse('"' + buf.join("\\u") + '"');
+};
+SimpleBuffer.prototype.readNumber = function readNumber(index, size) {
+  var ret = 0;
+  for (var i = index + size; i > index; ) {
+    ret = this.buf[--i] + ret * 256;
+  }
+  return ret;
+};
+SimpleBuffer.prototype.readUInt = function readUInt(index) {
+  return this.readNumber(index, 4);
+};
+SimpleBuffer.prototype.readULong = function readULong(index) {
+  return this.readNumber(index, 8);
+};
+SimpleBuffer.prototype.readHex = function readHex(index, size) {
+  return Array.prototype.slice
+    .call(this.buf, index, index + size)
+    .map(SimpleBuffer.toStdHex)
+    .join("");
 };

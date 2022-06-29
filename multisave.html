@@ -4,12 +4,18 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=no" />
   <title>百度网盘秒传链接批量转存</title>
-  <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/5.0.2/css/bootstrap.min.css" />
-  <script src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js"></script>
-  <script src="https://cdn.staticfile.org/twitter-bootstrap/5.0.2/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/5.1.3/css/bootstrap.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/js-base64@3.7.2/base64.js"></script>
+  <script src="https://cdn.staticfile.org/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdn.staticfile.org/twitter-bootstrap/5.1.3/js/bootstrap.min.js"></script>
   <script type="text/javascript" src="./common/Tools.js?version=0.8"></script>
   <script type="text/javascript">
     function inital() {
+      Base64.extendString();
+      $("#link").on("input", function (event) {
+        let result = parseQueryLink(event.target.value);
+        if (DuParser.parse(result).length) event.target.value = result;
+      }); // 绑定输入框事件, 输入一键秒传后尝试转换为普通秒传
       document.getElementById("savePath").value = localStorage.getItem("Blink_savePath");
       checkUpdate();
     }
@@ -20,17 +26,17 @@
       if (savePath.charAt(savePath.length - 1) !== "/") savePath += "/";
       var api = $('#api input:radio:checked').val();
       var data = DuParser.parse(document.getElementById("link").value)
-      if (!data.length) alert("未检测到有效的秒传链接");
+      if (!data.length) alert('未检测到有效的秒传链接, 请参考页面上方的 "使用教程" -> "支持格式"');
       else {
         data.forEach(function (file) {
-          if (api === "api1")
+          if (api === "api1" && file.md5s)
             saveFile(
               file.md5,
               file.md5s,
               file.size,
               savePath + file.path
             );
-          else if (api === "api2")
+          else if (api === "api2" || !data.md5s)
             saveFile2(
               file.md5,
               file.size,
@@ -90,7 +96,7 @@
           <div>
             <label for="link">秒传链接</label>
             <p><textarea name="link" id="link" class="form-control"
-                placeholder="bdpan... / BaiduPCS-Go ... / 5b1...#b3a... 一行一条" rows=6></textarea></p>
+                placeholder="换行分隔, 一行一条&#13;&#10;支持: 一键秒传链接/PanDL/游侠/标准码/PCS-GO" rows=6></textarea></p>
           </div>
           <p><button onclick="submitLink()" class="btn btn-primary">解析链接并转存</button></p>
         </div>

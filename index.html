@@ -5,35 +5,49 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=no" />
   <title>百度网盘秒传链接转存</title>
-  <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/5.0.2/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/5.1.3/css/bootstrap.min.css" />
   <meta name="description" content="百度网盘秒传链接在线转存/生成/转换，支持iOS/Android/PC and more" />
-  <script src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js"></script>
-  <script src="https://cdn.staticfile.org/twitter-bootstrap/5.0.2/js/bootstrap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/js-base64@3.7.2/base64.js"></script>
+  <script src="https://cdn.staticfile.org/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdn.staticfile.org/twitter-bootstrap/5.1.3/js/bootstrap.min.js"></script>
   <script type="text/javascript" src="./common/Tools.js?version=0.8"></script>
   <script type="text/javascript">
     function inital() {
-      document.getElementById("savePath").value = localStorage.getItem("Blink_savePath");
+      Base64.extendString();
+      $("#link").on("input", function (event) {
+        var result = parseQueryLink(event.target.value);
+        var linkNum = DuParser.parse(result).length
+        if (linkNum) {
+          if (linkNum > 1) {
+            alert('监测到多条秒传, 请使用页面上方的 "批量转存"');
+            event.target.value = ''
+            return;
+          }
+          event.target.value = result;
+        }
+      }); // 绑定输入框事件, 输入一键秒传后尝试转换为普通秒传
+      $("#savePath").val(localStorage.getItem("Blink_savePath"));
       checkUpdate();
     }
 
     function submitLink() {
-      var savePath = document.getElementById("savePath").value;
+      var savePath = $("#savePath").val();
       if (!checkPath(savePath)) return;
       if (savePath.charAt(savePath.length - 1) !== "/") savePath += "/"; // 补全路径结尾的 "/"
       var api = $('#api input:radio:checked').val();
-      var data = DuParser.parse(document.getElementById("link").value);
-      if (!data.length) alert("未检测到有效的秒传链接");
-      else if (data.length !== 1) alert('含多个链接，请使用批量转存');
+      var data = DuParser.parse($("#link").val());
+      if (!data.length) alert('未检测到有效的秒传链接, 请参考页面上方的 "使用教程" -> "支持格式"');
+      else if (data.length !== 1) alert('监测到多条秒传, 请使用页面上方的 "批量转存"');
       else {
         data = data[0];
-        if (api === "api1")
+        if (api === "api1" && data.md5s)
           saveFile(
             data.md5,
             data.md5s,
             data.size,
             savePath + data.path
           );
-        else if (api === "api2")
+        else if (api === "api2" || !data.md5s)
           saveFile2(
             data.md5,
             data.size,
@@ -43,21 +57,21 @@
     }
 
     function submitData() {
-      var savePath = document.getElementById("savePath").value;
+      var savePath = $("#savePath").val();
       if (savePath.charAt(savePath.length - 1) !== "/") savePath += "/";
       var api = $('#api input:radio:checked').val();
       if (api === "api1")
         saveFile(
-          document.getElementById("md5").value,
-          document.getElementById("md5s").value,
-          document.getElementById("size").value,
-          savePath + document.getElementById("path").value
+          $("#md5").val(),
+          $("#md5s").val(),
+          $("#size").val(),
+          savePath + $("#path").val()
         );
       else if (api === "api2")
         saveFile2(
-          document.getElementById("md5").value,
-          document.getElementById("size").value,
-          savePath + document.getElementById("path").value
+          $("#md5").val(),
+          $("#size").val(),
+          savePath + $("#path").val()
         );
     }
 
@@ -83,7 +97,8 @@
                 href="https://www.microsoft.com/zh-cn/edge" target="_blank" rel="noopener noreferrer">Edge</a>/<a
                 href="https://www.mozilla.org/zh-CN/firefox/new/" target="_blank" rel="noopener noreferrer">火狐</a>/<a
                 href="https://play.google.com/store/apps/details?id=com.kiwibrowser.browser" target="_blank"
-                rel="noopener noreferrer">安卓kiwi</a>/<a href="https://www.wandoujia.com/apps/7672441" target="_blank" rel="noopener noreferrer">安卓Edge</a>)</b></p>
+                rel="noopener noreferrer">安卓kiwi</a>/<a href="https://www.wandoujia.com/apps/7672441" target="_blank"
+                rel="noopener noreferrer">安卓Edge</a>)</b></p>
         </div>
         <div id="body" class="col-sm-8 offset-sm-2 col-md-6 offset-md-3 text-center">
           <div id="api">
@@ -104,13 +119,13 @@
           <div>
             <label for="link">秒传链接</label>
             <p><input name="link" id="link" class="form-control"
-                placeholder="bdpan... / BaiduPCS-Go ... / 5b1...#b3a... "></p>
+                placeholder="支持: 一键秒传链接/PanDL/游侠/标准码/PCS-GO"></p>
           </div>
           <p><button onclick="submitLink()" class="btn btn-primary">解析链接并转存</button>
           </p>
-          <a data-toggle="collapse" data-parent="#body" href="#collapseOne">
-            <p>手动输入文件属性</p>
-          </a>
+          <p><a data-bs-toggle="collapse" data-parent="#body" href="#collapseOne">
+              手动输入文件属性
+            </a></p>
           <div id="collapseOne" class="panel-collapse collapse in">
             <div>
               <label>文件名</label>
