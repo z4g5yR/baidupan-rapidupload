@@ -1,7 +1,20 @@
-name: Deploy
-uses: crazy-max/ghaction-github-pages@v2
-with:
-  target_branch: master
-  build_dir: ./
-env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+name: baidupan-rapidupload
+
+on:
+  # 每当 push 到 Guide 分支时触发部署
+  push:
+    branches: [master]
+  # 手动触发部署
+  workflow_dispatch:
+
+jobs:
+  baidupan-rapidupload:
+    runs-on: ubuntu-latest
+    steps:
+      -name: deploy
+      uses: crazy-max/ghaction-github-pages@v2
+      with:
+        target_branch: master
+        build_dir: ./
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
