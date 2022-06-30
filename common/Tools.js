@@ -6,7 +6,7 @@
  * @Description: 共用JS工具库
  */
 
-const version = "0.8";
+const version = "0.9";
 const updateUrl =
   "https://api.github.com/repos/mengzonefire/baidupan-rapidupload/releases/latest";
 const releasePage =
