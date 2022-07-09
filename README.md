@@ -6,6 +6,8 @@
 
 [示例站点2(可能不是最新版本)](http://rapidacg.gmgard.moe/)
 
+[示例站点3](https://mengzonefire.code.misakanet.cn/baidupan-rapidupload)
+
 # 说明
 
 基于原作者 [TkzcM](https://t.me/TkzcM/) 的版本做了进一步完善
