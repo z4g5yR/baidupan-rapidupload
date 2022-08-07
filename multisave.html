@@ -21,7 +21,7 @@
       }
 
       function submitLink() {
-        const savePath = document.getElementById("savePath").value;
+        let savePath = document.getElementById("savePath").value;
         if (!checkPath(savePath)) return;
         if (savePath.charAt(savePath.length - 1) !== "/") savePath += "/";
         const api = $('#api input:radio:checked').val();

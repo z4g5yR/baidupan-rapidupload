@@ -68,7 +68,7 @@ function openPostWindow(url, data) {
 
   // add data
   const key = Object.getOwnPropertyNames(data);
-  for (const i = 0; i < key.length; i++) {
+  for (let i = 0; i < key.length; i++) {
     const hideInput = document.createElement("input");
     hideInput.type = "hidden";
     hideInput.name = key[i];
@@ -179,7 +179,7 @@ DuParser.parseDu_v3 = function parseDu_v3(szUrl) {
     return null;
   }
   const buf = new SimpleBuffer(raw);
-  const ptr = 9;
+  let ptr = 9;
   const arrFiles = [];
   let fileInfo, nameSize;
   const total = buf.readUInt(5);
@@ -240,7 +240,7 @@ SimpleBuffer.toStdHex = function toStdHex(n) {
 SimpleBuffer.prototype.fromString = function fromString(str) {
   const len = str.length;
   this.buf = new Uint8Array(len);
-  for (const i = 0; i < len; i++) {
+  for (let i = 0; i < len; i++) {
     this.buf[i] = str.charCodeAt(i);
   }
 };
@@ -252,14 +252,14 @@ SimpleBuffer.prototype.readUnicode = function readUnicode(index, size) {
     .call(this.buf, index, index + size)
     .map(SimpleBuffer.toStdHex);
   const buf = [""];
-  for (const i = 0; i < size; i += 2) {
+  for (let i = 0; i < size; i += 2) {
     buf.push(bufText[i + 1] + bufText[i]);
   }
   return JSON.parse('"' + buf.join("\\u") + '"');
 };
 SimpleBuffer.prototype.readNumber = function readNumber(index, size) {
-  const ret = 0;
-  for (const i = index + size; i > index; ) {
+  let ret = 0;
+  for (let i = index + size; i > index; ) {
     ret = this.buf[--i] + ret * 256;
   }
   return ret;

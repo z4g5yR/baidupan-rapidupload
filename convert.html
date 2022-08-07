@@ -56,7 +56,7 @@
       function convert() {
         $('#convert').html('');
         const lines = $('#link').value.split('\n');
-        for (const i = 0; i < lines.length; i++) {
+        for (let i = 0; i < lines.length; i++) {
           //code here using lines[i] which will give you each line
           if ($('#pcs').prop('checked')) {
             getLink(lines[i], backcall = function (md5, slicemd5, file_length, file_name) {
