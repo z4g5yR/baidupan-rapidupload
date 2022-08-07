@@ -29,12 +29,12 @@ function checkUpdate() {
     lastVersion = localStorage.getItem("Last_version");
     if (lastVersion && version !== lastVersion)
       $("#version").after(
-        '<p>发现新版本 <a href="' +
-          releasePage +
-          lastVersion +
-          '" target=_blank>v' +
-          lastVersion +
-          "</a>, 请联系网站管理员更新</p>"
+        `<p>发现新版本 <a href="${
+          releasePage
+          }${lastVersion
+          }" target=_blank>v${
+          lastVersion
+          }</a>, 请联系网站管理员更新</p>`
       );
     return;
   } else localStorage.setItem("Last_checkUpdate", date);
@@ -42,18 +42,17 @@ function checkUpdate() {
     url: updateUrl,
     type: "GET",
     dataType: "json",
-    success: function (data, statusTxt) {
+    success (data, statusTxt) {
       localStorage.setItem("Last_version", data.tag_name.toString());
-      if (statusTxt === "success" && data.tag_name !== version) {
+      if (statusTxt === "success" && data.tag_name !== version)
         $("#version").after(
-          '<p>发现新版本 <a href="' +
-            releasePage +
-            data.tag_name +
-            '" target=_blank>v' +
-            data.tag_name +
-            "</a>, 请联系网站管理员更新</p>"
+          `<p>发现新版本 <a href="${
+            releasePage
+            }${data.tag_name
+            }" target=_blank>v${
+            data.tag_name
+            }</a>, 请联系网站管理员更新</p>`
         );
-      }
     },
   });
 }
@@ -86,15 +85,14 @@ function saveFile(md5, md5s, size, path) {
     "content-length": size,
     "content-md5": md5.toLowerCase(),
     "slice-md5": md5s.toLowerCase(),
-    path: path,
+    path,
   });
 }
 
 function saveFile2(md5, size, path) {
   openPostWindow("https://pan.baidu.com/rest/2.0/xpan/file?method=create", {
-    size: size,
+    size, path,
     block_list: JSON.stringify([md5.toLowerCase()]),
-    path: path,
     rtype: 0,
   });
 }
@@ -132,52 +130,36 @@ DuParser.parseDu_v1 = function parseDu_v1(szUrl) {
     .replace(/\s*bdpan:\/\//g, " ")
     .trim()
     .split(" ")
-    .map(function (z) {
-      return z
-        .trim()
+    .map(z => z.trim()
         .fromBase64()
-        .match(/([\s\S]+)\|([\d]{1,20})\|([\dA-Fa-f]{32})\|([\dA-Fa-f]{32})/);
-    })
-    .filter(function (z) {
-      return z;
-    })
-    .map(function (info) {
-      return {
+        .match(/([\s\S]+)\|([\d]{1,20})\|([\dA-Fa-f]{32})\|([\dA-Fa-f]{32})/))
+    .filter(z => z)
+    .map(info => ({
         md5: info[3],
         md5s: info[4],
         size: info[2],
         path: info[1],
-      };
-    });
+      }));
 };
 DuParser.parseDu_v2 = function parseDu_v2(szUrl) {
   return szUrl
     .split("\n")
-    .map(function (z) {
-      // unsigned long long: 0~18446744073709551615
-      return z
-        .trim()
-        .match(
+    .map(z => z.trim()
+        .match( // unsigned long long: 0~18446744073709551615
           /-length=([\d]{1,20}) -md5=([\dA-Fa-f]{32}) -slicemd5=([\dA-Fa-f]{32})[\s\S]+"([\s\S]+)"/
-        );
-    })
-    .filter(function (z) {
-      return z;
-    })
-    .map(function (info) {
-      return {
+        ))
+    .filter(z => z)
+    .map(info => ({
         md5: info[2],
         md5s: info[3],
         size: info[1],
         path: info[4],
-      };
-    });
+      }));
 };
 DuParser.parseDu_v3 = function parseDu_v3(szUrl) {
   const raw = atob(szUrl.slice(6).replace(/\s/g, ""));
-  if (raw.slice(0, 5) !== "BDFS\x00") {
-    return null;
-  }
+  if (raw.slice(0, 5) !== "BDFS\x00") return null;
+
   const buf = new SimpleBuffer(raw);
   let ptr = 9;
   const arrFiles = [];
@@ -185,10 +167,12 @@ DuParser.parseDu_v3 = function parseDu_v3(szUrl) {
   const total = buf.readUInt(5);
   let i;
   for (i = 0; i < total; i++) {
-    // 大小 (8 bytes)
-    // MD5 + MD5S (0x20)
-    // nameSize (4 bytes)
-    // Name (unicode)
+    /*
+     * 大小 (8 bytes)
+     * MD5 + MD5S (0x20)
+     * nameSize (4 bytes)
+     * Name (unicode)
+     */
     fileInfo = {};
     fileInfo.size = buf.readULong(ptr + 0);
     fileInfo.md5 = buf.readHex(ptr + 8, 0x10);
@@ -205,25 +189,19 @@ DuParser.parseDu_v3 = function parseDu_v3(szUrl) {
 DuParser.parseDu_v4 = function parseDu_v3(szUrl) {
   return szUrl
     .split("\n")
-    .map(function (z) {
-      return z
+    .map(z => z
         .trim()
         .match(
           /^([\dA-Fa-f]{32})#(?:([\dA-Fa-f]{32})#)?([\d]{1,20})#([\s\S]+)/
-        );
-    })
-    .filter(function (z) {
-      return z;
-    })
-    .map(function (info) {
-      return {
+        ))
+    .filter(z => z)
+    .map(info => ({
         // 标准码 / 短版标准码(无md5s)
         md5: info[1],
         md5s: info[2] || "",
         size: info[3],
         path: info[4],
-      };
-    });
+      }));
 };
 
 /**
@@ -235,7 +213,7 @@ function SimpleBuffer(str) {
   this.fromString(str);
 }
 SimpleBuffer.toStdHex = function toStdHex(n) {
-  return ("0" + n.toString(16)).slice(-2);
+  return (`0${n.toString(16)}`).slice(-2);
 };
 SimpleBuffer.prototype.fromString = function fromString(str) {
   const len = str.length;
@@ -245,9 +223,8 @@ SimpleBuffer.prototype.fromString = function fromString(str) {
   }
 };
 SimpleBuffer.prototype.readUnicode = function readUnicode(index, size) {
-  if (size & 1) {
-    size++;
-  }
+  if (size & 1) size++;
+
   const bufText = Array.prototype.slice
     .call(this.buf, index, index + size)
     .map(SimpleBuffer.toStdHex);
@@ -255,11 +232,11 @@ SimpleBuffer.prototype.readUnicode = function readUnicode(index, size) {
   for (let i = 0; i < size; i += 2) {
     buf.push(bufText[i + 1] + bufText[i]);
   }
-  return JSON.parse('"' + buf.join("\\u") + '"');
+  return JSON.parse(`"${buf.join("\\u")}"`);
 };
 SimpleBuffer.prototype.readNumber = function readNumber(index, size) {
   let ret = 0;
-  for (let i = index + size; i > index; ) {
+  for (let i = index + size; i > index;) {
     ret = this.buf[--i] + ret * 256;
   }
   return ret;
