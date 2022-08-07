@@ -7,14 +7,12 @@
  */
 
 const version = "0.9";
-const updateUrl =
-  "https://api.github.com/repos/mengzonefire/baidupan-rapidupload/releases/latest";
-const releasePage =
-  "https://github.com/mengzonefire/baidupan-rapidupload/releases/tag/";
-const bdlinkPattern = /#bdlink=([\da-zA-Z+/=]+)/; // b64可能出现的字符: 大小写字母a-zA-Z, 数字0-9, +, /, = (=用于末尾补位)
+const updateUrl = "https://api.github.com/repos/mengzonefire/baidupan-rapidupload/releases/latest";
+const releasePage = "https://github.com/mengzonefire/baidupan-rapidupload/releases/tag/";
+const bdlinkPattern = /#bdlink=([\da-zA-Z+/=]+)/u; // b64可能出现的字符: 大小写字母a-zA-Z, 数字0-9, +, /, = (=用于末尾补位)
 
 function checkPath(path) {
-  if (!path.match(/["\\\:*?<>|]/)) {
+  if (!path.match(/["\\:*?<>|]/u)) {
     localStorage.setItem("Blink_savePath", path);
     return true;
   }
@@ -26,8 +24,8 @@ function checkUpdate() {
   const d = new Date();
   const date = d.getMonth().toString() + d.getDate().toString();
   if (date === localStorage.getItem("Last_checkUpdate")) {
-    lastVersion = localStorage.getItem("Last_version");
-    if (lastVersion && version !== lastVersion)
+    const lastVersion = localStorage.getItem("Last_version");
+    if (lastVersion && version !== lastVersion) {
       $("#version").after(
         `<p>发现新版本 <a href="${
           releasePage
@@ -36,15 +34,17 @@ function checkUpdate() {
           lastVersion
           }</a>, 请联系网站管理员更新</p>`
       );
+    }
     return;
-  } else localStorage.setItem("Last_checkUpdate", date);
+  }
+  localStorage.setItem("Last_checkUpdate", date);
   $.ajax({
     url: updateUrl,
     type: "GET",
     dataType: "json",
     success (data, statusTxt) {
       localStorage.setItem("Last_version", data.tag_name.toString());
-      if (statusTxt === "success" && data.tag_name !== version)
+      if (statusTxt === "success" && data.tag_name !== version) {
         $("#version").after(
           `<p>发现新版本 <a href="${
             releasePage
@@ -53,6 +53,7 @@ function checkUpdate() {
             data.tag_name
             }</a>, 请联系网站管理员更新</p>`
         );
+      }
     },
   });
 }
@@ -108,7 +109,7 @@ function parseQueryLink(url) {
  * @description: 秒传链接解析器
  */
 function DuParser() {}
-DuParser.parse = function generalDuCodeParse(szUrl) {
+DuParser.parse = function (szUrl) {
   let r;
   if (szUrl.indexOf("bdpan") === 0) {
     r = DuParser.parseDu_v1(szUrl);
@@ -125,14 +126,14 @@ DuParser.parse = function generalDuCodeParse(szUrl) {
   }
   return r;
 };
-DuParser.parseDu_v1 = function parseDu_v1(szUrl) {
+DuParser.parseDu_v1 = function (szUrl) {
   return szUrl
-    .replace(/\s*bdpan:\/\//g, " ")
+    .replace(/\s*bdpan:\/\//gu, " ")
     .trim()
     .split(" ")
     .map(z => z.trim()
         .fromBase64()
-        .match(/([\s\S]+)\|([\d]{1,20})\|([\dA-Fa-f]{32})\|([\dA-Fa-f]{32})/))
+        .match(/([\s\S]+)\|([\d]{1,20})\|([\dA-Fa-f]{32})\|([\dA-Fa-f]{32})/u))
     .filter(z => z)
     .map(info => ({
         md5: info[3],
@@ -141,12 +142,12 @@ DuParser.parseDu_v1 = function parseDu_v1(szUrl) {
         path: info[1],
       }));
 };
-DuParser.parseDu_v2 = function parseDu_v2(szUrl) {
+DuParser.parseDu_v2 = function (szUrl) {
   return szUrl
     .split("\n")
     .map(z => z.trim()
         .match( // unsigned long long: 0~18446744073709551615
-          /-length=([\d]{1,20}) -md5=([\dA-Fa-f]{32}) -slicemd5=([\dA-Fa-f]{32})[\s\S]+"([\s\S]+)"/
+          /-length=([\d]{1,20}) -md5=([\dA-Fa-f]{32}) -slicemd5=([\dA-Fa-f]{32})[\s\S]+"([\s\S]+)"/u
         ))
     .filter(z => z)
     .map(info => ({
@@ -156,8 +157,8 @@ DuParser.parseDu_v2 = function parseDu_v2(szUrl) {
         path: info[4],
       }));
 };
-DuParser.parseDu_v3 = function parseDu_v3(szUrl) {
-  const raw = atob(szUrl.slice(6).replace(/\s/g, ""));
+DuParser.parseDu_v3 = function (szUrl) {
+  const raw = atob(szUrl.slice(6).replace(/\s/gu, ""));
   if (raw.slice(0, 5) !== "BDFS\x00") return null;
 
   const buf = new SimpleBuffer(raw);
@@ -186,13 +187,13 @@ DuParser.parseDu_v3 = function parseDu_v3(szUrl) {
   }
   return arrFiles;
 };
-DuParser.parseDu_v4 = function parseDu_v3(szUrl) {
+DuParser.parseDu_v4 = function (szUrl) {
   return szUrl
     .split("\n")
     .map(z => z
         .trim()
         .match(
-          /^([\dA-Fa-f]{32})#(?:([\dA-Fa-f]{32})#)?([\d]{1,20})#([\s\S]+)/
+          /^([\dA-Fa-f]{32})#(?:([\dA-Fa-f]{32})#)?([\d]{1,20})#([\s\S]+)/u
         ))
     .filter(z => z)
     .map(info => ({
