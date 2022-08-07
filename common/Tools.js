@@ -209,47 +209,49 @@ DuParser.parseDu_v4 = function parseDu_v3(szUrl) {
  * 用于解析游侠度娘提取码。
  * @param {SimpleBuffer}
  */
-function SimpleBuffer(str) {
-  this.fromString(str);
-}
-SimpleBuffer.toStdHex = function toStdHex(n) {
-  return (`0${n.toString(16)}`).slice(-2);
-};
-SimpleBuffer.prototype.fromString = function fromString(str) {
-  const len = str.length;
-  this.buf = new Uint8Array(len);
-  for (let i = 0; i < len; i++) {
-    this.buf[i] = str.charCodeAt(i);
+class SimpleBuffer {
+  constructor(str) {
+    this.fromString(str);
   }
-};
-SimpleBuffer.prototype.readUnicode = function readUnicode(index, size) {
-  if (size & 1) size++;
+  static toStdHex(n) {
+    return (`0${n.toString(16)}`).slice(-2);
+  }
+  fromString(str) {
+    const len = str.length;
+    this.buf = new Uint8Array(len);
+    for (let i = 0; i < len; i++) {
+      this.buf[i] = str.charCodeAt(i);
+    }
+  }
+  readUnicode(index, size) {
+    if (size & 1) size++;
 
-  const bufText = Array.prototype.slice
-    .call(this.buf, index, index + size)
-    .map(SimpleBuffer.toStdHex);
-  const buf = [""];
-  for (let i = 0; i < size; i += 2) {
-    buf.push(bufText[i + 1] + bufText[i]);
+    const bufText = Array.prototype.slice
+      .call(this.buf, index, index + size)
+      .map(SimpleBuffer.toStdHex);
+    const buf = [""];
+    for (let i = 0; i < size; i += 2) {
+      buf.push(bufText[i + 1] + bufText[i]);
+    }
+    return JSON.parse(`"${buf.join("\\u")}"`);
   }
-  return JSON.parse(`"${buf.join("\\u")}"`);
-};
-SimpleBuffer.prototype.readNumber = function readNumber(index, size) {
-  let ret = 0;
-  for (let i = index + size; i > index;) {
-    ret = this.buf[--i] + ret * 256;
+  readNumber(index, size) {
+    let ret = 0;
+    for (let i = index + size; i > index;) {
+      ret = this.buf[--i] + ret * 256;
+    }
+    return ret;
   }
-  return ret;
-};
-SimpleBuffer.prototype.readUInt = function readUInt(index) {
-  return this.readNumber(index, 4);
-};
-SimpleBuffer.prototype.readULong = function readULong(index) {
-  return this.readNumber(index, 8);
-};
-SimpleBuffer.prototype.readHex = function readHex(index, size) {
-  return Array.prototype.slice
-    .call(this.buf, index, index + size)
-    .map(SimpleBuffer.toStdHex)
-    .join("");
-};
+  readUInt(index) {
+    return this.readNumber(index, 4);
+  }
+  readULong(index) {
+    return this.readNumber(index, 8);
+  }
+  readHex(index, size) {
+    return Array.prototype.slice
+      .call(this.buf, index, index + size)
+      .map(SimpleBuffer.toStdHex)
+      .join("");
+  }
+}

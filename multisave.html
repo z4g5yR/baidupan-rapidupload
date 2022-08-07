@@ -16,16 +16,16 @@
           let result = parseQueryLink(event.target.value);
           if (DuParser.parse(result).length) event.target.value = result;
         }); // 绑定输入框事件, 输入一键秒传后尝试转换为普通秒传
-        document.getElementById("savePath").value = localStorage.getItem("Blink_savePath");
+        $("#savePath").val(localStorage.getItem("Blink_savePath"));
         checkUpdate();
       }
 
       function submitLink() {
-        let savePath = document.getElementById("savePath").value;
+        let savePath = $("#savePath").val();
         if (!checkPath(savePath)) return;
         if (savePath.charAt(savePath.length - 1) !== "/") savePath += "/";
         const api = $('#api input:radio:checked').val();
-        const data = DuParser.parse(document.getElementById("link").value)
+        const data = DuParser.parse($("#link").val())
         if (!data.length) alert('未检测到有效的秒传链接, 请参考页面上方的 "使用教程" -> "支持格式"');
         else {
           data.forEach(function (file) {
