@@ -12,8 +12,8 @@
     <script>
       function inital() {
         Base64.extendString();
-        $("#link").on("input", function (event) {
-          let result = parseQueryLink(event.target.value);
+        $("#link").on("input", event => {
+          const result = parseQueryLink(event.target.value);
           if (DuParser.parse(result).length) event.target.value = result;
         }); // 绑定输入框事件, 输入一键秒传后尝试转换为普通秒传
         $("#savePath").val(localStorage.getItem("Blink_savePath"));
@@ -26,24 +26,26 @@
         if (savePath.charAt(savePath.length - 1) !== "/") savePath += "/";
         const api = $('#api input:radio:checked').val();
         const data = DuParser.parse($("#link").val())
-        if (!data.length) alert('未检测到有效的秒传链接, 请参考页面上方的 "使用教程" -> "支持格式"');
-        else {
-          data.forEach(function (file) {
-            if (api === "api1" && file.md5s)
-              saveFile(
-                file.md5,
-                file.md5s,
-                file.size,
-                savePath + file.path
-              );
-            else if (api === "api2" || !data.md5s)
-              saveFile2(
-                file.md5,
-                file.size,
-                savePath + file.path
-              );
-          });
+        if (!data.length) {
+          alert('未检测到有效的秒传链接, 请参考页面上方的 "使用教程" -> "支持格式"');
+          return;
         }
+        data.forEach(file => {
+          if (api === "api1" && file.md5s) {
+            saveFile(
+              file.md5,
+              file.md5s,
+              file.size,
+              savePath + file.path
+            );
+          } else if (api === "api2" || !data.md5s) {
+            saveFile2(
+              file.md5,
+              file.size,
+              savePath + file.path
+            );
+          }
+        });
       }
 
       window.addEventListener("DOMContentLoaded", inital);
