@@ -61,14 +61,14 @@
 
                   function addBdlink(slicemd5) {
                     document.body.appendChild(document.createElement('input')).id = 'link' + file_index;
-                    document.getElementById('link' + file_index).type = 'hidden';
-                    document.getElementById('link' + file_index).setAttribute('value', slicemd5);
+                    $('#link' + file_index).prop('type', 'hidden');
+                    $('#link' + file_index).val(slicemd5);
                     const file_length = file.size;
                     const file_name = file.name;
-                    const slice_md5 = document.getElementById('link' + file_index).value;
+                    const slice_md5 = $('#link' + file_index).val();
                     const link = file_md5 + '#' + slice_md5 + '#' + file_length + '#' + file_name
-                    document.getElementById('link').innerHTML += link + '\n';
-                    document.body.removeChild(document.getElementById('link' + file_index));
+                    $('#link').append(link + '\n');
+                    document.body.removeChild($('#link' + file_index));
                   }
 
                   loadNext();
@@ -76,7 +76,7 @@
 
                 function calculate(files, file_amount, file_index) {
                   if (file_index == file_amount) {
-                    document.getElementById('log').innerHTML = '生成完成, 共 ' + file_amount + ' 个文件';
+                    $('#log').html('生成完成, 共 ' + file_amount + ' 个文件');
                     return;
                   }
 
@@ -104,8 +104,8 @@
                     const start = currentChunk * chunkSize,
                           end = start + chunkSize >= file.size ? file.size : start + chunkSize;
                     fileReader.readAsBinaryString(blobSlice.call(file, start, end));
-                    document.getElementById('log').innerHTML = '正在生成第 ' + (file_index + 1) + '/' +
-                      file_amount + ' 个文件 ' + ((currentChunk / chunks) * 100).toFixed() + '%';
+                    $('#log').html('正在生成第 ' + (file_index + 1) + '/' +
+                      file_amount + ' 个文件 ' + ((currentChunk / chunks) * 100).toFixed() + '%');
                   };
 
                   loadNext();

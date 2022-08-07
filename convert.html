@@ -54,24 +54,24 @@
         return 'BaiduPCS-Go rapidupload -length=' + file_length + ' -md5=' + md5 + ' -slicemd5=' + slicemd5 + ' \"\/' + file_name + '\"';
       }
       function convert() {
-        document.getElementById('convert').innerHTML = '';
-        const lines = document.getElementById('link').value.split('\n');
+        $('#convert').html('');
+        const lines = $('#link').value.split('\n');
         for (const i = 0; i < lines.length; i++) {
           //code here using lines[i] which will give you each line
-          if (document.getElementById('pcs').checked) {
+          if ($('#pcs').prop('checked')) {
             getLink(lines[i], backcall = function (md5, slicemd5, file_length, file_name) {
-              document.getElementById('convert').innerHTML += 'BaiduPCS-Go rapidupload -length=' + file_length + ' -md5=' + md5 + ' -slicemd5=' + slicemd5 + ' \"\/' + file_name + '\"' + '\n';
+              $('#convert').append('BaiduPCS-Go rapidupload -length=' + file_length + ' -md5=' + md5 + ' -slicemd5=' + slicemd5 + ' \"\/' + file_name + '\"' + '\n');
             });
           }
-          if (document.getElementById('bdpan').checked) {
+          if ($('#bdpan').prop('checked')) {
             getLink(lines[i], backcall = function (md5, slicemd5, file_length, file_name) {
 
-              document.getElementById('convert').innerHTML += 'bdpan://' + utoa(file_name + '\|' + file_length + '\|' + md5 + '\|' + slicemd5) + '\n';
+              $('#convert').append('bdpan://' + utoa(file_name + '\|' + file_length + '\|' + md5 + '\|' + slicemd5) + '\n');
             });
           }
-          if (document.getElementById('mengji').checked) {
+          if ($('#mengji').prop('checked')) {
             getLink(lines[i], backcall = function (md5, slicemd5, file_length, file_name) {
-              document.getElementById('convert').innerHTML += md5 + '#' + slicemd5 + '#' + file_length + '#' + file_name + '\n';
+              $('#convert').append(md5 + '#' + slicemd5 + '#' + file_length + '#' + file_name + '\n');
             });
           }
         }
