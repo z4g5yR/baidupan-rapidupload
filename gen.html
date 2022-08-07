@@ -1,141 +1,126 @@
 <!DOCTYPE html>
 <html lang="zh">
-
-<head>
+  <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>百度网盘秒传链接生成</title>
     <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/5.1.3/css/bootstrap.min.css" />
     <script src="https://cdn.staticfile.org/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdn.staticfile.org/twitter-bootstrap/5.1.3/js/bootstrap.min.js"></script>
     <script>
     </script>
-</head>
-
-<body>
+  </head>
+  <body>
     <div id="app">
-        <div id="container" class="container">
-            <div class="row">
-                <div class="col-sm-8 offset-sm-2 col-md-6 offset-md-3 text-center">
-                    <h1>百度网盘秒传链接生成</h1>
-                    <p id="version">v0.9 mengzonefire version</p>
-                    <p><b>请先阅读 <a href='./manual.html' target=_blank>使用教程</b></a></br></p>
-                    <p><a href='./index.html'>秒传转存</a> <a href='./multisave.html'>批量转存</a> <a
-                            href='./convert.html'>秒传转换</a></p>
-                    <p><b>支持批量生成, 需要在度盘中存在相同文件才能使秒传生效!</b></p>
-                </div>
+      <div id="container" class="container">
+        <div class="row">
+            <div class="col-sm-8 offset-sm-2 col-md-6 offset-md-3 text-center">
+              <h1>百度网盘秒传链接生成</h1>
+              <p id="version">v0.9 mengzonefire version</p>
+              <p><b>请先阅读 <a href='./manual.html' target=_blank>使用教程</b></a></br></p>
+              <p><a href='./index.html'>秒传转存</a> <a href='./multisave.html'>批量转存</a> <a href='./convert.html'>秒传转换</a></p>
+              <p><b>支持批量生成, 需要在度盘中存在相同文件才能使秒传生效!</b></p>
+            </div>
+            <div class="col-sm-8 offset-sm-2 col-md-6 offset-md-3 text-center">
+              <input id=file type=file placeholder="select a file" multiple>
+              <p id=log style="margin-top: 15px;"></p>
+              <script src="https://cdn.staticfile.org/spark-md5/3.0.2/spark-md5.min.js"></script>
+              <script>
+                document.getElementById("file").addEventListener("change", function () {
+                  const file_amount = file.files.length;
+                  calculate(file.files, file_amount, 0);
+                })
 
-                <div class="col-sm-8 offset-sm-2 col-md-6 offset-md-3 text-center">
-                    <input id=file type=file placeholder="select a file" multiple>
-                    <p id=log style="margin-top: 15px;"></p>
-                    <script src="https://cdn.staticfile.org/spark-md5/3.0.2/spark-md5.min.js"></script>
-                    <script>
-                        document.getElementById("file").addEventListener("change", function () {
-                            const file_amount = file.files.length;
-                            calculate(file.files, file_amount, 0);
-                        })
+                function slicemd5(files, file_amount, file_index, file_md5) {
+                  const file = files[file_index],
+                        fileReader = new FileReader(),
+                        blobSlice = File.prototype.mozSlice || File.prototype.webkitSlice || File.prototype.slice,
+                        chunkSize = 262144,
+                        // read in chunks of 256KB  
+                        chunks = Math.ceil(1),
+                        currentChunk = 0,
+                        spark = new SparkMD5();
 
-                        function slicemd5(files, file_amount, file_index, file_md5) {
-                            const file = files[file_index],
-                                fileReader = new FileReader(),
-                                blobSlice = File.prototype.mozSlice || File.prototype.webkitSlice || File.prototype
-                                .slice,
-                                chunkSize = 262144,
-                                // read in chunks of 256KB  
-                                chunks = Math.ceil(1),
-                                currentChunk = 0,
-                                spark = new SparkMD5();
+                  fileReader.onload = function (e) {
+                    spark.appendBinary(e.target.result); // append binary string  
+                    currentChunk++;
 
-                            fileReader.onload = function (e) {
-                                spark.appendBinary(e.target.result); // append binary string  
-                                currentChunk++;
+                    if (currentChunk < chunks) {
+                      loadNext();
+                    } else {
+                      addBdlink(spark.end());
+                      calculate(files, file_amount, file_index + 1);
+                    }
+                  };
 
-                                if (currentChunk < chunks) {
-                                    loadNext();
-                                } else {
-                                    addBdlink(spark.end());
-                                    calculate(files, file_amount, file_index + 1);
-                                }
-                            };
+                  function loadNext() {
+                    const start = currentChunk * chunkSize,
+                          end = start + chunkSize >= file.size ? file.size : start + chunkSize;
+                    fileReader.readAsBinaryString(blobSlice.call(file, start, end));
+                  };
 
-                            function loadNext() {
-                                const start = currentChunk * chunkSize,
-                                    end = start + chunkSize >= file.size ? file.size : start + chunkSize;
+                  function addBdlink(slicemd5) {
+                    document.body.appendChild(document.createElement('input')).id = 'link' + file_index;
+                    document.getElementById('link' + file_index).type = 'hidden';
+                    document.getElementById('link' + file_index).setAttribute('value', slicemd5);
+                    const file_length = file.size;
+                    const file_name = file.name;
+                    const slice_md5 = document.getElementById('link' + file_index).value;
+                    const link = file_md5 + '#' + slice_md5 + '#' + file_length + '#' + file_name
+                    document.getElementById('link').innerHTML += link + '\n';
+                    document.body.removeChild(document.getElementById('link' + file_index));
+                  }
 
-                                fileReader.readAsBinaryString(blobSlice.call(file, start, end));
-                            };
+                  loadNext();
+                }
 
-                            function addBdlink(slicemd5) {
-                                document.body.appendChild(document.createElement(
-                                    'input')).id = 'link' + file_index;
-                                document.getElementById('link' + file_index).type = 'hidden';
-                                document.getElementById('link' + file_index).setAttribute(
-                                    'value', slicemd5);
-                                const file_length = file.size;
-                                const file_name = file.name;
-                                const slice_md5 = document.getElementById('link' + file_index).value;
-                                const link = file_md5 + '#' + slice_md5 + '#' + file_length +
-                                    '#' + file_name
-                                document.getElementById('link').innerHTML += link +
-                                    '\n';
-                                document.body.removeChild(document.getElementById(
-                                    'link' + file_index));
-                            }
+                function calculate(files, file_amount, file_index) {
+                  if (file_index == file_amount) {
+                    document.getElementById('log').innerHTML = '生成完成, 共 ' + file_amount + ' 个文件';
+                    return;
+                  }
 
-                            loadNext();
-                        }
+                  const file = files[file_index],
+                        fileReader = new FileReader(),
+                        blobSlice = File.prototype.mozSlice || File.prototype.webkitSlice || File.prototype.slice,
+                        chunkSize = 2097152,
+                        // read in chunks of 2MB  
+                        chunks = Math.ceil(file.size / chunkSize),
+                        currentChunk = 0,
+                        spark = new SparkMD5();
 
-                        function calculate(files, file_amount, file_index) {
-                            if (file_index == file_amount) {
-                                document.getElementById('log').innerHTML = '生成完成, 共 ' + file_amount +
-                                    ' 个文件';
-                                return;
-                            }
+                  fileReader.onload = function (e) {
+                    spark.appendBinary(e.target.result); // append binary string  
+                    currentChunk++;
 
-                            const file = files[file_index],
-                                fileReader = new FileReader(),
-                                blobSlice = File.prototype.mozSlice || File.prototype.webkitSlice || File.prototype
-                                .slice,
-                                chunkSize = 2097152,
-                                // read in chunks of 2MB  
-                                chunks = Math.ceil(file.size / chunkSize),
-                                currentChunk = 0,
-                                spark = new SparkMD5();
+                    if (currentChunk < chunks) {
+                      loadNext();
+                    } else {
+                      slicemd5(files, file_amount, file_index, spark.end());
+                    }
+                  };
 
-                            fileReader.onload = function (e) {
-                                spark.appendBinary(e.target.result); // append binary string  
-                                currentChunk++;
+                  function loadNext() {
+                    const start = currentChunk * chunkSize,
+                          end = start + chunkSize >= file.size ? file.size : start + chunkSize;
+                    fileReader.readAsBinaryString(blobSlice.call(file, start, end));
+                    document.getElementById('log').innerHTML = '正在生成第 ' + (file_index + 1) + '/' +
+                      file_amount + ' 个文件 ' + ((currentChunk / chunks) * 100).toFixed() + '%';
+                  };
 
-                                if (currentChunk < chunks) {
-                                    loadNext();
-                                } else {
-                                    slicemd5(files, file_amount, file_index, spark.end());
-                                }
-                            };
-
-                            function loadNext() {
-                                const start = currentChunk * chunkSize,
-                                    end = start + chunkSize >= file.size ? file.size : start + chunkSize;
-                                fileReader.readAsBinaryString(blobSlice.call(file, start, end));
-                                document.getElementById('log').innerHTML = '正在生成第 ' + (file_index + 1) + '/' +
-                                    file_amount + ' 个文件 ' + ((currentChunk / chunks) * 100).toFixed() + '%';
-                            };
-
-                            loadNext();
-                        }
-                    </script>
-                </div>
-
-                <div id="body" class="col-sm-8 offset-sm-2 col-md-6 offset-md-3 text-center">
-                    <div class="form-group">
-                        <label for="link">秒传链接</label>
-                        <textarea name="link" id="link" class="form-control" placeholder="生成的链接 " rows="8"></textarea>
-                    </div>
-                    <b>所有请求在用户端进行，服务器不保存任何数据</b>
-                </div>
-
+                  loadNext();
+                }
+              </script>
+            </div>
+            <div id="body" class="col-sm-8 offset-sm-2 col-md-6 offset-md-3 text-center">
+              <div class="form-group">
+                <label for="link">秒传链接</label>
+                <textarea name="link" id="link" class="form-control" placeholder="生成的链接 " rows="8"></textarea>
+              </div>
+              <b>所有请求在用户端进行，服务器不保存任何数据</b>
             </div>
         </div>
+      </div>
     </div>
-</body>
+  </body>
 </html>
