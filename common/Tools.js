@@ -23,8 +23,8 @@ function checkPath(path) {
 }
 
 function checkUpdate() {
-  var d = new Date();
-  var date = d.getMonth().toString() + d.getDate().toString();
+  const d = new Date();
+  const date = d.getMonth().toString() + d.getDate().toString();
   if (date === localStorage.getItem("Last_checkUpdate")) {
     lastVersion = localStorage.getItem("Last_version");
     if (lastVersion && version !== lastVersion)
@@ -60,16 +60,16 @@ function checkUpdate() {
 
 function openPostWindow(url, data) {
   // create form
-  var tempForm = document.createElement("form");
+  const tempForm = document.createElement("form");
   document.body.appendChild(tempForm);
   tempForm.method = "post";
   tempForm.target = "_blank";
   tempForm.action = url;
 
   // add data
-  var key = Object.getOwnPropertyNames(data);
-  for (var i = 0; i < key.length; i++) {
-    var hideInput = document.createElement("input");
+  const key = Object.getOwnPropertyNames(data);
+  for (const i = 0; i < key.length; i++) {
+    const hideInput = document.createElement("input");
     hideInput.type = "hidden";
     hideInput.name = key[i];
     hideInput.value = data[key[i]];
@@ -103,7 +103,7 @@ function saveFile2(md5, size, path) {
  * @description: 从url中解析秒传链接
  */
 function parseQueryLink(url) {
-  var bdlinkB64 = url.match(bdlinkPattern);
+  const bdlinkB64 = url.match(bdlinkPattern);
   return bdlinkB64 ? bdlinkB64[1].fromBase64() : "";
 }
 /**
@@ -111,7 +111,7 @@ function parseQueryLink(url) {
  */
 function DuParser() {}
 DuParser.parse = function generalDuCodeParse(szUrl) {
-  var r;
+  let r;
   if (szUrl.indexOf("bdpan") === 0) {
     r = DuParser.parseDu_v1(szUrl);
     r.ver = "PanDL";
@@ -174,16 +174,16 @@ DuParser.parseDu_v2 = function parseDu_v2(szUrl) {
     });
 };
 DuParser.parseDu_v3 = function parseDu_v3(szUrl) {
-  var raw = atob(szUrl.slice(6).replace(/\s/g, ""));
+  const raw = atob(szUrl.slice(6).replace(/\s/g, ""));
   if (raw.slice(0, 5) !== "BDFS\x00") {
     return null;
   }
-  var buf = new SimpleBuffer(raw);
-  var ptr = 9;
-  var arrFiles = [];
-  var fileInfo, nameSize;
-  var total = buf.readUInt(5);
-  var i;
+  const buf = new SimpleBuffer(raw);
+  const ptr = 9;
+  const arrFiles = [];
+  let fileInfo, nameSize;
+  const total = buf.readUInt(5);
+  let i;
   for (i = 0; i < total; i++) {
     // 大小 (8 bytes)
     // MD5 + MD5S (0x20)
@@ -238,9 +238,9 @@ SimpleBuffer.toStdHex = function toStdHex(n) {
   return ("0" + n.toString(16)).slice(-2);
 };
 SimpleBuffer.prototype.fromString = function fromString(str) {
-  var len = str.length;
+  const len = str.length;
   this.buf = new Uint8Array(len);
-  for (var i = 0; i < len; i++) {
+  for (const i = 0; i < len; i++) {
     this.buf[i] = str.charCodeAt(i);
   }
 };
@@ -248,18 +248,18 @@ SimpleBuffer.prototype.readUnicode = function readUnicode(index, size) {
   if (size & 1) {
     size++;
   }
-  var bufText = Array.prototype.slice
+  const bufText = Array.prototype.slice
     .call(this.buf, index, index + size)
     .map(SimpleBuffer.toStdHex);
-  var buf = [""];
-  for (var i = 0; i < size; i += 2) {
+  const buf = [""];
+  for (const i = 0; i < size; i += 2) {
     buf.push(bufText[i + 1] + bufText[i]);
   }
   return JSON.parse('"' + buf.join("\\u") + '"');
 };
 SimpleBuffer.prototype.readNumber = function readNumber(index, size) {
-  var ret = 0;
-  for (var i = index + size; i > index; ) {
+  const ret = 0;
+  for (const i = index + size; i > index; ) {
     ret = this.buf[--i] + ret * 256;
   }
   return ret;

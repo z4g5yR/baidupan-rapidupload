@@ -15,8 +15,8 @@
     function inital() {
       Base64.extendString();
       $("#link").on("input", function (event) {
-        var result = parseQueryLink(event.target.value);
-        var linkNum = DuParser.parse(result).length
+        const result = parseQueryLink(event.target.value);
+        const linkNum = DuParser.parse(result).length
         if (linkNum) {
           if (linkNum > 1) {
             alert('监测到多条秒传, 请使用页面上方的 "批量转存"');
@@ -31,11 +31,11 @@
     }
 
     function submitLink() {
-      var savePath = $("#savePath").val();
+      const savePath = $("#savePath").val();
       if (!checkPath(savePath)) return;
       if (savePath.charAt(savePath.length - 1) !== "/") savePath += "/"; // 补全路径结尾的 "/"
-      var api = $('#api input:radio:checked').val();
-      var data = DuParser.parse($("#link").val());
+      const api = $('#api input:radio:checked').val();
+      const data = DuParser.parse($("#link").val());
       if (!data.length) alert('未检测到有效的秒传链接, 请参考页面上方的 "使用教程" -> "支持格式"');
       else if (data.length !== 1) alert('监测到多条秒传, 请使用页面上方的 "批量转存"');
       else {
@@ -57,9 +57,9 @@
     }
 
     function submitData() {
-      var savePath = $("#savePath").val();
+      const savePath = $("#savePath").val();
       if (savePath.charAt(savePath.length - 1) !== "/") savePath += "/";
-      var api = $('#api input:radio:checked').val();
+      const api = $('#api input:radio:checked').val();
       if (api === "api1")
         saveFile(
           $("#md5").val(),

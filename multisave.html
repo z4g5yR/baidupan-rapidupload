@@ -21,11 +21,11 @@
     }
 
     function submitLink() {
-      var savePath = document.getElementById("savePath").value;
+      const savePath = document.getElementById("savePath").value;
       if (!checkPath(savePath)) return;
       if (savePath.charAt(savePath.length - 1) !== "/") savePath += "/";
-      var api = $('#api input:radio:checked').val();
-      var data = DuParser.parse(document.getElementById("link").value)
+      const api = $('#api input:radio:checked').val();
+      const data = DuParser.parse(document.getElementById("link").value)
       if (!data.length) alert('未检测到有效的秒传链接, 请参考页面上方的 "使用教程" -> "支持格式"');
       else {
         data.forEach(function (file) {

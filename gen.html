@@ -31,12 +31,12 @@
                     <script src="https://cdn.staticfile.org/spark-md5/3.0.2/spark-md5.min.js"></script>
                     <script>
                         document.getElementById("file").addEventListener("change", function () {
-                            var file_amount = file.files.length;
+                            const file_amount = file.files.length;
                             calculate(file.files, file_amount, 0);
                         })
 
                         function slicemd5(files, file_amount, file_index, file_md5) {
-                            var file = files[file_index],
+                            const file = files[file_index],
                                 fileReader = new FileReader(),
                                 blobSlice = File.prototype.mozSlice || File.prototype.webkitSlice || File.prototype
                                 .slice,
@@ -59,7 +59,7 @@
                             };
 
                             function loadNext() {
-                                var start = currentChunk * chunkSize,
+                                const start = currentChunk * chunkSize,
                                     end = start + chunkSize >= file.size ? file.size : start + chunkSize;
 
                                 fileReader.readAsBinaryString(blobSlice.call(file, start, end));
@@ -71,10 +71,10 @@
                                 document.getElementById('link' + file_index).type = 'hidden';
                                 document.getElementById('link' + file_index).setAttribute(
                                     'value', slicemd5);
-                                var file_length = file.size;
-                                var file_name = file.name;
-                                var slice_md5 = document.getElementById('link' + file_index).value;
-                                var link = file_md5 + '#' + slice_md5 + '#' + file_length +
+                                const file_length = file.size;
+                                const file_name = file.name;
+                                const slice_md5 = document.getElementById('link' + file_index).value;
+                                const link = file_md5 + '#' + slice_md5 + '#' + file_length +
                                     '#' + file_name
                                 document.getElementById('link').innerHTML += link +
                                     '\n';
@@ -92,7 +92,7 @@
                                 return;
                             }
 
-                            var file = files[file_index],
+                            const file = files[file_index],
                                 fileReader = new FileReader(),
                                 blobSlice = File.prototype.mozSlice || File.prototype.webkitSlice || File.prototype
                                 .slice,
@@ -114,7 +114,7 @@
                             };
 
                             function loadNext() {
-                                var start = currentChunk * chunkSize,
+                                const start = currentChunk * chunkSize,
                                     end = start + chunkSize >= file.size ? file.size : start + chunkSize;
                                 fileReader.readAsBinaryString(blobSlice.call(file, start, end));
                                 document.getElementById('log').innerHTML = '正在生成第 ' + (file_index + 1) + '/' +
