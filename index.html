@@ -1,85 +1,11 @@
 <!DOCTYPE html>
 <html lang="zh">
   <head>
-    <meta charset="utf-8" >
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" >
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>百度网盘秒传链接转存</title>
-    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/5.1.3/css/bootstrap.min.css" >
-    <meta name="description" content="百度网盘秒传链接在线转存/生成/转换，支持iOS/Android/PC and more" >
-    <script src="https://cdn.jsdelivr.net/npm/js-base64@3.7.2/base64.js"></script>
-    <script src="https://cdn.staticfile.org/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdn.staticfile.org/twitter-bootstrap/5.1.3/js/bootstrap.min.js"></script>
-    <script src="./common/Tools.js?version=0.9"></script>
-    <script>
-      function inital() {
-        Base64.extendString();
-        $('#link').on('input', event => {
-          const result = parseQueryLink(event.target.value);
-          const linkNum = DuParser.parse(result).length
-          if (linkNum) {
-            if (linkNum > 1) {
-              alert('监测到多条秒传, 请使用页面上方的 "批量转存"');
-              event.target.value = ''
-              return;
-            }
-            event.target.value = result;
-          }
-        }); // 绑定输入框事件, 输入一键秒传后尝试转换为普通秒传
-        $('#savePath').val(localStorage.getItem('Blink_savePath'));
-        checkUpdate();
-      }
-
-      function submitLink() {
-        let savePath = $('#savePath').val();
-        if (!checkPath(savePath)) return;
-        if (savePath.charAt(savePath.length - 1) !== '/') savePath += '/'; // 补全路径结尾的 "/"
-        const api = $('#api input:radio:checked').val();
-        const data = DuParser.parse($('#link').val());
-        if (!data.length) {
-          alert('未检测到有效的秒传链接, 请参考页面上方的 "使用教程" -> "支持格式"');
-        } else if (data.length !== 1) {
-          alert('监测到多条秒传, 请使用页面上方的 "批量转存"');
-        } else {
-          const data0 = data[0];
-          if (api === 'api1' && data0.md5s) {
-            saveFile(
-              data0.md5,
-              data0.md5s,
-              data0.size,
-              savePath + data0.path
-            );
-          } else if (api === 'api2' || !data0.md5s) {
-              saveFile2(
-              data0.md5,
-              data0.size,
-              savePath + data0.path
-            );
-          }
-        }
-      }
-
-      function submitData() {
-        let savePath = $('#savePath').val();
-        if (savePath.charAt(savePath.length - 1) !== '/') savePath += '/';
-        const api = $('#api input:radio:checked').val();
-        if (api === 'api1') {
-          saveFile(
-            $('#md5').val(),
-            $('#md5s').val(),
-            $('#size').val(),
-            savePath + $('#path').val()
-          );
-        } else if (api === 'api2') {
-          saveFile2(
-            $('#md5').val(),
-            $('#size').val(),
-            savePath + $('#path').val()
-          );
-        }
-      }
-
-      window.addEventListener('DOMContentLoaded', inital);
-    </script>
+    <meta name="description" content="百度网盘秒传链接在线转存/生成/转换，支持iOS/Android/PC and more">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/5.2.0/css/bootstrap.min.css">
   </head>
   <body>
     <div class="container">
@@ -155,5 +81,79 @@
         </div>
       </div>
     </div>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/5.2.0/js/bootstrap.min.js"></script>
+    <script src="https://cdn.staticfile.org/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-base64@3.7.2/base64.js"></script>
+    <script src="./common/Tools.js?version=0.9"></script>
+    <script>
+      function inital() {
+        Base64.extendString();
+        $('#link').on('input', event => {
+          const result = parseQueryLink(event.target.value);
+          const linkNum = DuParser.parse(result).length
+          if (linkNum) {
+            if (linkNum > 1) {
+              alert('监测到多条秒传, 请使用页面上方的 "批量转存"');
+              event.target.value = ''
+              return;
+            }
+            event.target.value = result;
+          }
+        }); // 绑定输入框事件, 输入一键秒传后尝试转换为普通秒传
+        $('#savePath').val(localStorage.getItem('Blink_savePath'));
+        checkUpdate();
+      }
+
+      function submitLink() {
+        let savePath = $('#savePath').val();
+        if (!checkPath(savePath)) return;
+        if (savePath.charAt(savePath.length - 1) !== '/') savePath += '/'; // 补全路径结尾的 "/"
+        const api = $('#api input:radio:checked').val();
+        const data = DuParser.parse($('#link').val());
+        if (!data.length) {
+          alert('未检测到有效的秒传链接, 请参考页面上方的 "使用教程" -> "支持格式"');
+        } else if (data.length !== 1) {
+          alert('监测到多条秒传, 请使用页面上方的 "批量转存"');
+        } else {
+          const data0 = data[0];
+          if (api === 'api1' && data0.md5s) {
+            saveFile(
+              data0.md5,
+              data0.md5s,
+              data0.size,
+              savePath + data0.path
+            );
+          } else if (api === 'api2' || !data0.md5s) {
+              saveFile2(
+              data0.md5,
+              data0.size,
+              savePath + data0.path
+            );
+          }
+        }
+      }
+
+      function submitData() {
+        let savePath = $('#savePath').val();
+        if (savePath.charAt(savePath.length - 1) !== '/') savePath += '/';
+        const api = $('#api input:radio:checked').val();
+        if (api === 'api1') {
+          saveFile(
+            $('#md5').val(),
+            $('#md5s').val(),
+            $('#size').val(),
+            savePath + $('#path').val()
+          );
+        } else if (api === 'api2') {
+          saveFile2(
+            $('#md5').val(),
+            $('#size').val(),
+            savePath + $('#path').val()
+          );
+        }
+      }
+
+      window.addEventListener('DOMContentLoaded', inital);
+    </script>
   </body>
 </html>
