@@ -6,14 +6,14 @@
  * @Description: 共用JS工具库
  */
 
-const version = "0.9";
-const updateUrl = "https://api.github.com/repos/mengzonefire/baidupan-rapidupload/releases/latest";
-const releasePage = "https://github.com/mengzonefire/baidupan-rapidupload/releases/tag/";
+const version = '0.9';
+const updateUrl = 'https://api.github.com/repos/mengzonefire/baidupan-rapidupload/releases/latest';
+const releasePage = 'https://github.com/mengzonefire/baidupan-rapidupload/releases/tag/';
 const bdlinkPattern = /#bdlink=([\da-zA-Z+/=]+)/u; // b64可能出现的字符: 大小写字母a-zA-Z, 数字0-9, +, /, = (=用于末尾补位)
 
 function checkPath(path) {
   if (!path.match(/["\\:*?<>|]/u)) {
-    localStorage.setItem("Blink_savePath", path);
+    localStorage.setItem('Blink_savePath', path);
     return true;
   }
   alert('转存路径错误, 不能含有字符\\":*?<>|, 示例: /GTA5/');
@@ -23,10 +23,10 @@ function checkPath(path) {
 function checkUpdate() {
   const d = new Date();
   const date = d.getMonth().toString() + d.getDate().toString();
-  if (date === localStorage.getItem("Last_checkUpdate")) {
-    const lastVersion = localStorage.getItem("Last_version");
+  if (date === localStorage.getItem('Last_checkUpdate')) {
+    const lastVersion = localStorage.getItem('Last_version');
     if (lastVersion && version !== lastVersion) {
-      $("#version").after(
+      $('#version').after(
         `<p>发现新版本 <a href="${
           releasePage
           }${lastVersion
@@ -37,15 +37,15 @@ function checkUpdate() {
     }
     return;
   }
-  localStorage.setItem("Last_checkUpdate", date);
+  localStorage.setItem('Last_checkUpdate', date);
   $.ajax({
     url: updateUrl,
-    type: "GET",
-    dataType: "json",
+    type: 'GET',
+    dataType: 'json',
     success (data, statusTxt) {
-      localStorage.setItem("Last_version", data.tag_name.toString());
-      if (statusTxt === "success" && data.tag_name !== version) {
-        $("#version").after(
+      localStorage.setItem('Last_version', data.tag_name.toString());
+      if (statusTxt === 'success' && data.tag_name !== version) {
+        $('#version').after(
           `<p>发现新版本 <a href="${
             releasePage
             }${data.tag_name
@@ -60,17 +60,17 @@ function checkUpdate() {
 
 function openPostWindow(url, data) {
   // create form
-  const tempForm = document.createElement("form");
+  const tempForm = document.createElement('form');
   document.body.appendChild(tempForm);
-  tempForm.method = "post";
-  tempForm.target = "_blank";
+  tempForm.method = 'post';
+  tempForm.target = '_blank';
   tempForm.action = url;
 
   // add data
   const key = Object.getOwnPropertyNames(data);
   for (let i = 0; i < key.length; i++) {
-    const hideInput = document.createElement("input");
-    hideInput.type = "hidden";
+    const hideInput = document.createElement('input');
+    hideInput.type = 'hidden';
     hideInput.name = key[i];
     hideInput.value = data[key[i]];
     tempForm.appendChild(hideInput);
@@ -82,16 +82,16 @@ function openPostWindow(url, data) {
 }
 
 function saveFile(md5, md5s, size, path) {
-  openPostWindow("https://pan.baidu.com/api/rapidupload", {
-    "content-length": size,
-    "content-md5": md5.toLowerCase(),
-    "slice-md5": md5s.toLowerCase(),
+  openPostWindow('https://pan.baidu.com/api/rapidupload', {
+    'content-length': size,
+    'content-md5': md5.toLowerCase(),
+    'slice-md5': md5s.toLowerCase(),
     path,
   });
 }
 
 function saveFile2(md5, size, path) {
-  openPostWindow("https://pan.baidu.com/rest/2.0/xpan/file?method=create", {
+  openPostWindow('https://pan.baidu.com/rest/2.0/xpan/file?method=create', {
     size, path,
     block_list: JSON.stringify([md5.toLowerCase()]),
     rtype: 0,
@@ -103,7 +103,7 @@ function saveFile2(md5, size, path) {
  */
 function parseQueryLink(url) {
   const bdlinkB64 = url.match(bdlinkPattern);
-  return bdlinkB64 ? bdlinkB64[1].fromBase64() : "";
+  return bdlinkB64 ? bdlinkB64[1].fromBase64() : '';
 }
 
 /**
@@ -111,28 +111,28 @@ function parseQueryLink(url) {
  */
 class DuParser {
   constructor() { }
-  parse(szUrl) {
+  static parse(szUrl) {
     let r;
-    if (szUrl.indexOf("bdpan") === 0) {
+    if (szUrl.indexOf('bdpan') === 0) {
       r = DuParser.parseDu_v1(szUrl);
-      r.ver = "PanDL";
-    } else if (szUrl.indexOf("BaiduPCS-Go") === 0) {
+      r.ver = 'PanDL';
+    } else if (szUrl.indexOf('BaiduPCS-Go') === 0) {
       r = DuParser.parseDu_v2(szUrl);
-      r.ver = "PCS-Go";
-    } else if (szUrl.indexOf("BDLINK") === 0) {
+      r.ver = 'PCS-Go';
+    } else if (szUrl.indexOf('BDLINK') === 0) {
       r = DuParser.parseDu_v3(szUrl);
-      r.ver = "游侠 v1";
+      r.ver = '游侠 v1';
     } else {
       r = DuParser.parseDu_v4(szUrl);
-      r.ver = "梦姬标准";
+      r.ver = '梦姬标准';
     }
     return r;
   }
-  parseDu_v1(szUrl) {
+  static parseDu_v1(szUrl) {
     return szUrl
-      .replace(/\s*bdpan:\/\//gu, " ")
+      .replace(/\s*bdpan:\/\//gu, ' ')
       .trim()
-      .split(" ")
+      .split(' ')
       .map(z => z.trim()
         .fromBase64()
         .match(/([\s\S]+)\|([\d]{1,20})\|([\dA-Fa-f]{32})\|([\dA-Fa-f]{32})/u))
@@ -144,9 +144,9 @@ class DuParser {
         path: info[1],
       }));
   }
-  parseDu_v2(szUrl) {
+  static parseDu_v2(szUrl) {
     return szUrl
-      .split("\n")
+      .split('\n')
       .map(z => z.trim()
         .match(
           /-length=([\d]{1,20}) -md5=([\dA-Fa-f]{32}) -slicemd5=([\dA-Fa-f]{32})[\s\S]+"([\s\S]+)"/u
@@ -159,9 +159,9 @@ class DuParser {
         path: info[4],
       }));
   }
-  parseDu_v3(szUrl) {
-    const raw = atob(szUrl.slice(6).replace(/\s/gu, ""));
-    if (raw.slice(0, 5) !== "BDFS\x00") return null;
+  static parseDu_v3(szUrl) {
+    const raw = atob(szUrl.slice(6).replace(/\s/gu, ''));
+    if (raw.slice(0, 5) !== 'BDFS\x00') return null;
 
     const buf = new SimpleBuffer(raw);
     let ptr = 9;
@@ -189,9 +189,9 @@ class DuParser {
     }
     return arrFiles;
   }
-  parseDu_v4(szUrl) {
+  static parseDu_v4(szUrl) {
     return szUrl
-      .split("\n")
+      .split('\n')
       .map(z => z
         .trim()
         .match(
@@ -201,7 +201,7 @@ class DuParser {
       .map(info => ({
         // 标准码 / 短版标准码(无md5s)
         md5: info[1],
-        md5s: info[2] || "",
+        md5s: info[2] || '',
         size: info[3],
         path: info[4],
       }));
@@ -233,16 +233,16 @@ class SimpleBuffer {
     const bufText = Array.prototype.slice
       .call(this.buf, index, index + size)
       .map(SimpleBuffer.toStdHex);
-    const buf = [""];
+    const buf = [''];
     for (let i = 0; i < size; i += 2) {
       buf.push(bufText[i + 1] + bufText[i]);
     }
-    return JSON.parse(`"${buf.join("\\u")}"`);
+    return JSON.parse(`"${buf.join('\\u')}"`);
   }
   readNumber(index, size) {
     let ret = 0;
     for (let i = index + size; i > index;) {
-      ret = this.buf[--i] + ret * 256;
+      ret = this.buf[--i] + (ret * 256);
     }
     return ret;
   }
@@ -256,6 +256,6 @@ class SimpleBuffer {
     return Array.prototype.slice
       .call(this.buf, index, index + size)
       .map(SimpleBuffer.toStdHex)
-      .join("");
+      .join('');
   }
 }
