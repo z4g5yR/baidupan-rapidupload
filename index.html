@@ -13,7 +13,7 @@
     <script>
       function inital() {
         Base64.extendString();
-        $("#link").on("input", event => {
+        $('#link').on('input', event => {
           const result = parseQueryLink(event.target.value);
           const linkNum = DuParser.parse(result).length
           if (linkNum) {
@@ -25,30 +25,30 @@
             event.target.value = result;
           }
         }); // 绑定输入框事件, 输入一键秒传后尝试转换为普通秒传
-        $("#savePath").val(localStorage.getItem("Blink_savePath"));
+        $('#savePath').val(localStorage.getItem('Blink_savePath'));
         checkUpdate();
       }
 
       function submitLink() {
-        let savePath = $("#savePath").val();
+        let savePath = $('#savePath').val();
         if (!checkPath(savePath)) return;
-        if (savePath.charAt(savePath.length - 1) !== "/") savePath += "/"; // 补全路径结尾的 "/"
+        if (savePath.charAt(savePath.length - 1) !== '/') savePath += '/'; // 补全路径结尾的 "/"
         const api = $('#api input:radio:checked').val();
-        const data = DuParser.parse($("#link").val());
+        const data = DuParser.parse($('#link').val());
         if (!data.length) {
           alert('未检测到有效的秒传链接, 请参考页面上方的 "使用教程" -> "支持格式"');
         } else if (data.length !== 1) {
           alert('监测到多条秒传, 请使用页面上方的 "批量转存"');
         } else {
           const data0 = data[0];
-          if (api === "api1" && data0.md5s) {
+          if (api === 'api1' && data0.md5s) {
             saveFile(
               data0.md5,
               data0.md5s,
               data0.size,
               savePath + data0.path
             );
-          } else if (api === "api2" || !data0.md5s) {
+          } else if (api === 'api2' || !data0.md5s) {
               saveFile2(
               data0.md5,
               data0.size,
@@ -59,26 +59,26 @@
       }
 
       function submitData() {
-        let savePath = $("#savePath").val();
-        if (savePath.charAt(savePath.length - 1) !== "/") savePath += "/";
+        let savePath = $('#savePath').val();
+        if (savePath.charAt(savePath.length - 1) !== '/') savePath += '/';
         const api = $('#api input:radio:checked').val();
-        if (api === "api1") {
+        if (api === 'api1') {
           saveFile(
-            $("#md5").val(),
-            $("#md5s").val(),
-            $("#size").val(),
-            savePath + $("#path").val()
+            $('#md5').val(),
+            $('#md5s').val(),
+            $('#size').val(),
+            savePath + $('#path').val()
           );
-        } else if (api === "api2") {
+        } else if (api === 'api2') {
           saveFile2(
-            $("#md5").val(),
-            $("#size").val(),
-            savePath + $("#path").val()
+            $('#md5').val(),
+            $('#size').val(),
+            savePath + $('#path').val()
           );
         }
       }
 
-      window.addEventListener("DOMContentLoaded", inital);
+      window.addEventListener('DOMContentLoaded', inital);
     </script>
   </head>
   <body>
@@ -117,7 +117,7 @@
             <div>
               <label for="savePath">转存路径</label>
               <p><input name="savePath" class="form-control" id="savePath"
-                  placeholder='不能含有字符\":*?<>|, 示例: /GTA5/, 留空保存在根目录'></p>
+                  placeholder="不能含有字符\":*?<>|, 示例: /GTA5/, 留空保存在根目录"></p>
             </div>
             <div>
               <label for="link">秒传链接</label>

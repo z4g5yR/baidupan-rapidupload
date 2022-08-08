@@ -26,7 +26,7 @@
             <p id="log" style="margin-top: 15px;"></p>
             <script src="https://cdn.staticfile.org/spark-md5/3.0.2/spark-md5.min.js"></script>
             <script>
-                $("#file").on("change", () => {
+                $('#file').on('change', () => {
                   const file_amount = file.files.length;
                   calculate(file.files, file_amount, 0);
                 })
@@ -38,8 +38,8 @@
                         chunkSize = 262144,
                         // read in chunks of 256KB
                         chunks = Math.ceil(1),
-                        currentChunk = 0,
                         spark = new SparkMD5();
+                  let currentChunk = 0;
 
                   fileReader.onload = function (e) {
                     spark.appendBinary(e.target.result); // append binary string
@@ -75,7 +75,7 @@
                 }
 
                 function calculate(files, file_amount, file_index) {
-                  if (file_index == file_amount) {
+                  if (file_index === file_amount) {
                     $('#log').html(`生成完成, 共 ${file_amount} 个文件`);
                     return;
                   }
