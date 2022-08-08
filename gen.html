@@ -68,7 +68,7 @@
                     const slice_md5 = $(`#link${file_index}`).val();
                     const link = `${file_md5}#${slice_md5}#${file_length}#${file_name}`
                     $('#link').append(`${link}\n`);
-                    document.body.removeChild($(`#link${file_index}`));
+                    document.body.removeChild($(`#link${file_index}`)[0]);
                   }
 
                   loadNext();
