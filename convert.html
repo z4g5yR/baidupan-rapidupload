@@ -52,7 +52,7 @@
       }
       function convert() {
         $('#convert').html('');
-        const lines = $('#link').value.split('\n');
+        const lines = $('#link').val().split('\n');
         for (let i = 0; i < lines.length; i++) {
           // code here using lines[i] which will give you each line
           if ($('#pcs').prop('checked')) {
