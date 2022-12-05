@@ -1,12 +1,12 @@
 /*
  * @Author: mengzonefire
  * @Date: 2021-10-14 16:36:56
- * @LastEditTime: 2022-11-10 10:34:40
+ * @LastEditTime: 2022-12-05 15:00:49
  * @LastEditors: mengzonefire
  * @Description: 共用JS工具库
  */
 
-const version = "1.1";
+const version = "1.2";
 const updateUrl =
   "https://api.github.com/repos/mengzonefire/baidupan-rapidupload/releases/latest";
 const releasePage =

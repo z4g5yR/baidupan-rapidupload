@@ -14,7 +14,7 @@
     <div class="row">
       <div class="col-sm-8 offset-sm-2 col-md-6 offset-md-3 text-center">
         <h1>百度网盘秒传链接批量转存</h1>
-        <p id="version">v1.1 mengzonefire version</p>
+        <p id="version">v1.2 mengzonefire version</p>
         <p><b>请先阅读 <a href="./manual.html" target="_blank">使用教程</b></a><br></p>
         <p><a href="./index.html">秒传转存</a> <a href="./gen.html">秒传生成</a> <a href="./convert.html">秒传转换</a>
         </p>
@@ -60,9 +60,11 @@
         <p><button onclick="submitLink()" class="btn btn-primary">解析链接并转存</button></p>
       </div>
       <div id="footer" class="col-sm-8 offset-sm-2 col-md-6 offset-md-3 text-center">
-        <p>转存弹窗显示的"errno"(错误码)的对应提示:<br>{"errno":404}(常规接口) {"errno":31190}(备用接口) 为秒传无效<br>{"errno":-8}
-          为路径下存在同名文件/文件夹<br>{"errno":-7} 为转存路径含有非法字符<br>{"errno":-10} 为网盘容量已满<br>{"errno":0}
-          为转存成功<br><b>所有请求在用户端进行，服务器不保存任何数据</b>
+        <p>转存后弹窗显示的"errno"(错误码)即转存结果:<br>{"errno":0} 为转存成功, 其余转存失败的errno请参考文档: <a
+            href="https://mengzonefire.code.misakanet.cn/rapid-upload-userscript-doc/document/FAQ/错误代码(网页工具).html"
+            rel="noopener noreferrer" target="_blank">载点1</a> <a
+            href="https://xtsat.github.io/rapid-upload-userscript-doc/document/FAQ/错误代码(网页工具).html"
+            rel="noopener noreferrer" target="_blank">载点2</a><br><b>所有请求在用户端进行，服务器不保存任何数据</b>
         </p>
       </div>
     </div>
@@ -70,7 +72,7 @@
   <script src="https://cdn.staticfile.org/twitter-bootstrap/5.2.0/js/bootstrap.min.js"></script>
   <script src="https://cdn.staticfile.org/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/js-base64@3.7.2/base64.js"></script>
-  <script src="./common/Tools.js?version=1.1"></script>
+  <script src="./common/Tools.js?version=1.2"></script>
   <script>
     function inital() {
       $('#bdstoken').val(localStorage.getItem('Blink_bdstoken'));
